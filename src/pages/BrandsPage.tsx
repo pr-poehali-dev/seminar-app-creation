@@ -125,11 +125,11 @@ export default function BrandsPage() {
                   <img
                     src={brand.logo}
                     alt={brand.name}
-                    className="w-12 h-12 object-contain bg-gray-100 rounded-lg p-2"
+                    className="w-20 h-20 object-contain bg-gray-100 rounded-lg p-2"
                   />
                 ) : (
-                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <Icon name="Image" size={24} className="text-gray-400" />
+                  <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <Icon name="Image" size={32} className="text-gray-400" />
                   </div>
                 )}
               </div>
