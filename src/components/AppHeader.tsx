@@ -1,0 +1,31 @@
+import { Button } from '@/components/ui/button';
+import Icon from '@/components/ui/icon';
+
+interface AppHeaderProps {
+  userEmail: string;
+  onLogout: () => void;
+}
+
+export default function AppHeader({ userEmail, onLogout }: AppHeaderProps) {
+  return (
+    <header className="fixed top-0 right-0 left-0 md:left-64 h-16 bg-white border-b border-gray-200 z-40">
+      <div className="flex items-center justify-between h-full px-6">
+        <div className="flex items-center gap-3">
+          <Icon name="Bell" size={20} className="text-gray-600" />
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-gray-700">{userEmail}</span>
+          <Button
+            onClick={onLogout}
+            variant="outline"
+            className="bg-[#8B5CF6] text-white hover:bg-[#7C3AED] border-none"
+          >
+            <Icon name="LogOut" size={16} className="mr-2" />
+            Выход
+          </Button>
+        </div>
+      </div>
+    </header>
+  );
+}

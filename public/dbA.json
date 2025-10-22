@@ -1,0 +1,56 @@
+{
+  "seminars": [
+    {
+      "id": 1,
+      "name": "Основы косметологии",
+      "speaker": "Иванова Мария",
+      "date": "2025-11-15",
+      "type": "future",
+      "status": "upcoming"
+    },
+    {
+      "id": 2,
+      "name": "Инновации в уходе за кожей",
+      "speaker": "Петров Алексей",
+      "date": "2025-12-01",
+      "type": "future",
+      "status": "upcoming"
+    },
+    {
+      "id": 3,
+      "name": "Антивозрастная косметология",
+      "speaker": "Сидорова Елена",
+      "date": "2025-10-05",
+      "type": "history",
+      "likes": 45,
+      "status": "completed"
+    },
+    {
+      "id": 4,
+      "name": "Филлеры и контурная пластика",
+      "speaker": "Козлов Дмитрий",
+      "date": "2025-09-20",
+      "type": "history",
+      "likes": 67,
+      "status": "completed"
+    },
+    {
+      "id": 5,
+      "name": "Современные методы омоложения",
+      "speaker": "Новикова Ольга",
+      "date": "2025-11-20",
+      "type": "request",
+      "status": "pending",
+      "requestedBy": "Клиника Красоты"
+    },
+    {
+      "id": 6,
+      "name": "Лазерные технологии",
+      "speaker": "Соколов Игорь",
+      "date": "2025-12-10",
+      "type": "request",
+      "status": "pending",
+      "requestedBy": "Медцентр Эстетика"
+    }
+  ]
+}
