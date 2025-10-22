@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import type { RootState, AppDispatch } from '@/store/store';
-import { setBrands, addBrand, deleteBrand } from '@/store/brandsSlice';
+import { setBrands, addBrand, deleteBrand, updateBrand } from '@/store/brandsSlice';
+import type { Brand } from '@/store/brandsSlice';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -17,6 +18,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 interface BrandFormData {
   name: string;
@@ -28,8 +36,10 @@ export default function BrandsPage() {
   const brands = useSelector((state: RootState) => state.brands.brands);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [deleteName, setDeleteName] = useState<string>('');
+  const [editBrand, setEditBrand] = useState<Brand | null>(null);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<BrandFormData>();
+  const { register: registerEdit, handleSubmit: handleSubmitEdit, reset: resetEdit, setValue, formState: { errors: errorsEdit } } = useForm<BrandFormData>();
 
   useEffect(() => {
     fetch('/dbB.json')
@@ -57,6 +67,24 @@ export default function BrandsPage() {
       dispatch(deleteBrand(deleteId));
       setDeleteId(null);
       setDeleteName('');
+    }
+  };
+
+  const handleEditClick = (brand: Brand) => {
+    setEditBrand(brand);
+    setValue('name', brand.name);
+    setValue('logo', brand.logo || '');
+  };
+
+  const onEditSubmit = (data: BrandFormData) => {
+    if (editBrand) {
+      dispatch(updateBrand({
+        id: editBrand.id,
+        name: data.name,
+        logo: data.logo,
+      }));
+      setEditBrand(null);
+      resetEdit();
     }
   };
 
@@ -137,7 +165,12 @@ export default function BrandsPage() {
               <div className="font-medium text-gray-900">{brand.name}</div>
 
               <div className="flex items-center justify-end gap-2">
-                <Button variant="ghost" size="icon" className="text-gray-600 hover:text-[#8B5CF6]">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => handleEditClick(brand)}
+                  className="text-gray-600 hover:text-[#8B5CF6]"
+                >
                   <Icon name="Pencil" size={18} />
                 </Button>
                 <Button
@@ -175,6 +208,68 @@ export default function BrandsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={editBrand !== null} onOpenChange={() => setEditBrand(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Редактировать бренд</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmitEdit(onEditSubmit)}>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="edit-name">Название бренда</Label>
+                <Input
+                  id="edit-name"
+                  {...registerEdit('name', { required: 'Название обязательно' })}
+                  placeholder="Введите название бренда"
+                  className="mt-1"
+                />
+                {errorsEdit.name && (
+                  <p className="text-red-500 text-sm mt-1">{errorsEdit.name.message}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="edit-logo">Логотип бренда</Label>
+                <div className="flex items-center gap-2 mt-1">
+                  <Input
+                    id="edit-logo"
+                    {...registerEdit('logo')}
+                    placeholder="URL логотипа"
+                    className="flex-1"
+                  />
+                  <Button type="button" variant="ghost" size="icon">
+                    <Icon name="Upload" size={20} className="text-gray-600" />
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Размер логотипа 600×600 в PNG, JPG, JPEG
+                </p>
+              </div>
+            </div>
+
+            <DialogFooter className="mt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setEditBrand(null);
+                  resetEdit();
+                }}
+                className="text-[#8B5CF6]"
+              >
+                Отмена
+              </Button>
+              <Button
+                type="submit"
+                className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
+              >
+                Сохранить изменения
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
