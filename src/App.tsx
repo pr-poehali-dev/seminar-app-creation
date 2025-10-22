@@ -8,6 +8,7 @@ import { store } from './store/store';
 import AppHeader from './components/AppHeader';
 import Sidebar from './components/Sidebar';
 import SeminarsPage from './pages/SeminarsPage';
+import BrandsPage from './pages/BrandsPage';
 import EmptyPage from './pages/EmptyPage';
 import { useState } from 'react';
 
@@ -40,7 +41,7 @@ const App = () => {
                   <Route path="/users" element={<EmptyPage />} />
                   <Route path="/categories" element={<EmptyPage />} />
                   <Route path="/cities" element={<EmptyPage />} />
-                  <Route path="/brands" element={<EmptyPage />} />
+                  <Route path="/brands" element={<BrandsPage />} />
                   <Route path="/protocols" element={<EmptyPage />} />
                   <Route path="/orders" element={<EmptyPage />} />
                   <Route path="/banners" element={<EmptyPage />} />
