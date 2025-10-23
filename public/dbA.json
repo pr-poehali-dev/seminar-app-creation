@@ -1,56 +1,227 @@
 {
-  "seminars": [
+  "cities": [
+    { "id": 1, "name": "Москва" },
+    { "id": 2, "name": "Санкт-Петербург" },
+    { "id": 3, "name": "Новосибирск" },
+    { "id": 4, "name": "Екатеринбург" },
+    { "id": 5, "name": "Казань" },
+    { "id": 6, "name": "Нижний Новгород" },
+    { "id": 7, "name": "Самара" },
+    { "id": 8, "name": "Ростов-на-Дону" },
+    { "id": 9, "name": "Волгоград" },
+    { "id": 10, "name": "Уфа" }
+  ],
+  "roles": [
+    { "id": 1, "name": "Администратор" },
+    { "id": 2, "name": "Пользователь" },
+    { "id": 3, "name": "Спикер" }
+  ],
+  "users": [
     {
       "id": 1,
-      "name": "Основы косметологии",
-      "speaker": "Иванова Мария",
-      "date": "2025-11-15",
-      "type": "future",
-      "status": "upcoming"
+      "fullName": "Иванова Мария Ивановна",
+      "organization": "Kosmoteros",
+      "email": "m.ivanova@example.com",
+      "phone": "+7 495 123-45-67",
+      "roleId": 3,
+      "cityId": 1,
+      "speciality": "Косметолог-эстетист"
     },
     {
       "id": 2,
-      "name": "Инновации в уходе за кожей",
-      "speaker": "Петров Алексей",
-      "date": "2025-12-01",
-      "type": "future",
+      "fullName": "Петрова Елена Викторовна",
+      "organization": "DermaClinic",
+      "email": "e.petrova@example.com",
+      "phone": "+7 812 234-56-78",
+      "roleId": 3,
+      "cityId": 2,
+      "speciality": "Дерматолог"
+    },
+    {
+      "id": 3,
+      "fullName": "Сидоров Антон Павлович",
+      "organization": "BeautyPro",
+      "email": "a.sidorov@example.com",
+      "phone": "+7 383 345-67-89",
+      "roleId": 3,
+      "cityId": 3,
+      "speciality": "Аппаратный косметолог"
+    },
+    {
+      "id": 4,
+      "fullName": "Кравцов Василий Дмитриевич",
+      "organization": "YouthLine",
+      "email": "v.kravtsov@example.com",
+      "phone": "+7 343 456-78-90",
+      "roleId": 3,
+      "cityId": 4,
+      "speciality": "Врач-эстетист"
+    },
+    {
+      "id": 5,
+      "fullName": "Алёшина Наталья Георгиевна",
+      "organization": "BeautyArt",
+      "email": "n.alyoshina@example.com",
+      "phone": "+7 843 567-89-01",
+      "roleId": 3,
+      "cityId": 5,
+      "speciality": "Специалист по контурной пластике"
+    },
+    {
+      "id": 6,
+      "fullName": "Ульянова Татьяна Сергеевна",
+      "organization": "AntiAgingLab",
+      "email": "t.ulianova@example.com",
+      "phone": "+7 831 678-90-12",
+      "roleId": 3,
+      "cityId": 6,
+      "speciality": "Эксперт по anti-age терапии"
+    },
+    {
+      "id": 7,
+      "fullName": "Смирнов Константин Леонидович",
+      "organization": "AcneCare",
+      "email": "k.smirnov@example.com",
+      "phone": "+7 846 789-01-23",
+      "roleId": 3,
+      "cityId": 7,
+      "speciality": "Дерматолог-акнеолог"
+    },
+    {
+      "id": 8,
+      "fullName": "Романова Светлана Олеговна",
+      "organization": "SkinClinic",
+      "email": "s.romanova@example.com",
+      "phone": "+7 863 890-12-34",
+      "roleId": 3,
+      "cityId": 8,
+      "speciality": "Косметолог по уходу за лицом"
+    },
+    {
+      "id": 9,
+      "fullName": "Васильева Ольга Алексеевна",
+      "organization": "Rejuvenate",
+      "email": "o.vasilieva@example.com",
+      "phone": "+7 846 901-23-45",
+      "roleId": 3,
+      "cityId": 9,
+      "speciality": "Эксперт по антивозрастным методикам"
+    },
+    {
+      "id": 10,
+      "fullName": "Зайцев Игорь Владиславович",
+      "organization": "HairClinic",
+      "email": "i.zaicev@example.com",
+      "phone": "+7 347 012-34-56",
+      "roleId": 3,
+      "cityId": 10,
+      "speciality": "Трихолог"
+    }
+  ],
+  "seminars": [
+    {
+      "id": 1,
+      "title": "Новинки Kosmoteros",
+      "description": "Обзор новых средств и методик от Kosmoteros.",
+      "date": "01.02.2025",
+      "time": "10:00",
+      "photo": "https://picsum.photos/id/1/750/730",
+      "userId": 1,
+      "status": "application"
+    },
+    {
+      "id": 2,
+      "title": "Семинар по пилингам",
+      "description": "Тонкости проведения химических пилингов различных типов.",
+      "date": "05.02.2025",
+      "time": "14:00",
+      "photo": "https://picsum.photos/id/2/750/730",
+      "userId": 2,
       "status": "upcoming"
     },
     {
       "id": 3,
-      "name": "Антивозрастная косметология",
-      "speaker": "Сидорова Елена",
-      "date": "2025-10-05",
-      "type": "history",
-      "likes": 45,
-      "status": "completed"
+      "title": "Аппаратная косметология для начинающих",
+      "description": "Основы работы с аппаратами IPL и RF-лифтинга.",
+      "date": "10.02.2025",
+      "time": "11:30",
+      "photo": "https://picsum.photos/id/3/750/730",
+      "userId": 3,
+      "status": "upcoming"
     },
     {
       "id": 4,
-      "name": "Филлеры и контурная пластика",
-      "speaker": "Козлов Дмитрий",
-      "date": "2025-09-20",
-      "type": "history",
-      "likes": 67,
-      "status": "completed"
+      "title": "Новые методы омоложения",
+      "description": "Инъекционные и неинъекционные технологии, подбор методики.",
+      "date": "12.02.2025",
+      "time": "09:00",
+      "photo": "https://picsum.photos/id/4/750/730",
+      "userId": 4,
+      "status": "history",
+      "likes": 25
     },
     {
       "id": 5,
-      "name": "Современные методы омоложения",
-      "speaker": "Новикова Ольга",
-      "date": "2025-11-20",
-      "type": "request",
-      "status": "pending",
-      "requestedBy": "Клиника Красоты"
+      "title": "Инновации в контурной пластике",
+      "description": "Современные филлеры, техника введения и особенности работы.",
+      "date": "15.02.2025",
+      "time": "16:00",
+      "photo": "https://picsum.photos/id/5/750/730",
+      "userId": 5,
+      "status": "history",
+      "likes": 40
     },
     {
       "id": 6,
-      "name": "Лазерные технологии",
-      "speaker": "Соколов Игорь",
-      "date": "2025-12-10",
-      "type": "request",
-      "status": "pending",
-      "requestedBy": "Медцентр Эстетика"
+      "title": "Тренды анти-эйдж терапии",
+      "description": "Комплексный подход к омоложению кожи лица и шеи.",
+      "date": "18.02.2025",
+      "time": "13:00",
+      "photo": "https://picsum.photos/id/6/750/730",
+      "userId": 6,
+      "status": "application"
+    },
+    {
+      "id": 7,
+      "title": "Лечение акне и постакне",
+      "description": "Стратегии и выбор препаратов, уход в период ремиссии.",
+      "date": "20.02.2025",
+      "time": "15:30",
+      "photo": "https://picsum.photos/id/7/750/730",
+      "userId": 7,
+      "status": "upcoming"
+    },
+    {
+      "id": 8,
+      "title": "Профессиональная чистка лица",
+      "description": "Комбинированные методы, подбор средств до и после процедуры.",
+      "date": "25.02.2025",
+      "time": "09:30",
+      "photo": "https://picsum.photos/id/8/750/730",
+      "userId": 8,
+      "status": "history",
+      "likes": 18
+    },
+    {
+      "id": 9,
+      "title": "Коррекция возрастных изменений",
+      "description": "Особенности работы с мимическими морщинами и гравитационным птозом.",
+      "date": "28.02.2025",
+      "time": "17:00",
+      "photo": "https://picsum.photos/id/9/750/730",
+      "userId": 9,
+      "status": "upcoming"
+    },
+    {
+      "id": 10,
+      "title": "Современная трихология",
+      "description": "Диагностика, методы лечения и профилактика выпадения волос.",
+      "date": "03.03.2025",
+      "time": "10:00",
+      "photo": "https://picsum.photos/id/10/750/730",
+      "userId": 10,
+      "status": "history",
+      "likes": 32
     }
   ]
 }

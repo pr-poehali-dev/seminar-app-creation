@@ -1,5 +1,6 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
 import type { RootState, AppDispatch } from '@/store/store';
 import {
   setSeminars,
@@ -8,9 +9,13 @@ import {
   setPage,
   setRowsPerPage,
   deleteSeminar,
+  addSeminar,
 } from '@/store/seminarsSlice';
+import type { Seminar } from '@/store/seminarsSlice';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
 import {
   Table,
@@ -27,33 +32,85 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 const tabs = [
-  { id: 'future', label: 'Будущие' },
+  { id: 'application', label: 'Заявки на семинар' },
+  { id: 'upcoming', label: 'Будущие' },
   { id: 'history', label: 'История' },
-  { id: 'request', label: 'Заявки на семинар' },
 ];
+
+interface SeminarFormData {
+  title: string;
+  description: string;
+  userId: number;
+  date: string;
+  time: string;
+  photo: string;
+}
+
+interface User {
+  id: number;
+  fullName: string;
+  speciality: string;
+  phone: string;
+}
+
+interface City {
+  id: number;
+  name: string;
+}
 
 export default function SeminarsPage() {
   const dispatch = useDispatch<AppDispatch>();
   const { seminars, searchQuery, currentTab, page, rowsPerPage } = useSelector(
     (state: RootState) => state.seminars
   );
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const [cities, setCities] = useState<City[]>([]);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    watch,
+  } = useForm<SeminarFormData>();
 
   useEffect(() => {
     fetch('/dbA.json')
       .then((res) => res.json())
-      .then((data) => dispatch(setSeminars(data.seminars)));
+      .then((data) => {
+        const transformedSeminars = data.seminars.map((s: any) => ({
+          ...s,
+        }));
+        dispatch(setSeminars(transformedSeminars));
+        setUsers(data.users || []);
+        setCities(data.cities || []);
+      });
   }, [dispatch]);
+
+  const getUserById = (userId: number) => {
+    return users.find((u) => u.id === userId);
+  };
 
   const filteredSeminars = useMemo(() => {
     return seminars.filter(
       (seminar) =>
-        seminar.type === currentTab &&
-        (seminar.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          seminar.speaker.toLowerCase().includes(searchQuery.toLowerCase()))
+        seminar.status === currentTab &&
+        (seminar.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          getUserById(seminar.userId)?.fullName.toLowerCase().includes(searchQuery.toLowerCase()))
     );
-  }, [seminars, currentTab, searchQuery]);
+  }, [seminars, currentTab, searchQuery, users]);
 
   const paginatedSeminars = useMemo(() => {
     const start = page * rowsPerPage;
@@ -65,6 +122,56 @@ export default function SeminarsPage() {
   const handleDelete = (id: number) => {
     dispatch(deleteSeminar(id));
   };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.match(/^image\/(png|jpeg|jpg)$/)) {
+      alert('Пожалуйста, загрузите изображение в формате PNG, JPG или JPEG');
+      return;
+    }
+
+    setUploadingPhoto(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error('Ошибка загрузки');
+
+      const data = await response.json();
+      setValue('photo', data.url);
+    } catch (error) {
+      console.error('Ошибка загрузки фото:', error);
+      alert('Ошибка загрузки фото');
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const onSubmit = (data: SeminarFormData) => {
+    const newSeminar: Seminar = {
+      id: Date.now(),
+      title: data.title,
+      description: data.description,
+      date: data.date,
+      time: data.time,
+      photo: data.photo || '',
+      userId: data.userId,
+      status: 'application',
+    };
+    dispatch(addSeminar(newSeminar));
+    setShowAddDialog(false);
+    reset();
+  };
+
+  const selectedUser = watch('userId');
+  const selectedUserData = users.find((u) => u.id === Number(selectedUser));
 
   return (
     <div className="p-6">
@@ -103,7 +210,10 @@ export default function SeminarsPage() {
         ))}
       </div>
 
-      <Button className="w-full mb-4 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white">
+      <Button
+        onClick={() => setShowAddDialog(true)}
+        className="w-full mb-4 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
+      >
         Добавить семинар
       </Button>
 
@@ -122,46 +232,51 @@ export default function SeminarsPage() {
                   </TableHead>
                   <TableHead>Название</TableHead>
                   <TableHead>Спикер</TableHead>
+                  {currentTab === 'application' && <TableHead>Телефон</TableHead>}
                   <TableHead>Дата</TableHead>
                   {currentTab === 'history' && <TableHead>Лайки</TableHead>}
-                  {(currentTab === 'history' || currentTab === 'request') && (
-                    <TableHead>Действия</TableHead>
-                  )}
+                  {currentTab === 'upcoming' && <TableHead>Действия</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedSeminars.map((seminar) => (
-                  <TableRow key={seminar.id}>
-                    <TableCell>
-                      <input type="checkbox" className="rounded" />
-                    </TableCell>
-                    <TableCell className="font-medium">{seminar.name}</TableCell>
-                    <TableCell className="text-gray-600">{seminar.speaker}</TableCell>
-                    <TableCell className="text-gray-600">
-                      {new Date(seminar.date).toLocaleDateString('ru-RU')}
-                    </TableCell>
-                    {currentTab === 'history' && (
+                {paginatedSeminars.map((seminar) => {
+                  const user = getUserById(seminar.userId);
+                  return (
+                    <TableRow key={seminar.id}>
                       <TableCell>
-                        <div className="flex items-center gap-1 text-[#8B5CF6]">
-                          <Icon name="Heart" size={16} />
-                          <span>{seminar.likes}</span>
-                        </div>
+                        <input type="checkbox" className="rounded" />
                       </TableCell>
-                    )}
-                    {(currentTab === 'history' || currentTab === 'request') && (
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(seminar.id)}
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Icon name="Trash2" size={16} />
-                        </Button>
+                      <TableCell className="font-medium">{seminar.title}</TableCell>
+                      <TableCell className="text-gray-600">{user?.fullName || '-'}</TableCell>
+                      {currentTab === 'application' && (
+                        <TableCell className="text-gray-600">{user?.phone || '-'}</TableCell>
+                      )}
+                      <TableCell className="text-gray-600">
+                        {seminar.date} {seminar.time}
                       </TableCell>
-                    )}
-                  </TableRow>
-                ))}
+                      {currentTab === 'history' && (
+                        <TableCell>
+                          <div className="flex items-center gap-1 text-[#8B5CF6]">
+                            <Icon name="Heart" size={16} />
+                            <span>{seminar.likes || 0}</span>
+                          </div>
+                        </TableCell>
+                      )}
+                      {currentTab === 'upcoming' && (
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDelete(seminar.id)}
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Icon name="Trash2" size={16} />
+                          </Button>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>
@@ -208,6 +323,186 @@ export default function SeminarsPage() {
           </div>
         </>
       )}
+
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Добавить семинар</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="title">Название*</Label>
+                <Input
+                  id="title"
+                  {...register('title', { required: 'Название обязательно' })}
+                  placeholder="Новинки Kosmoteros"
+                  className="mt-1"
+                />
+                {errors.title && (
+                  <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="description">Описание*</Label>
+                <Textarea
+                  id="description"
+                  {...register('description', { required: 'Описание обязательно' })}
+                  placeholder="Опишите семинар"
+                  className="mt-1 min-h-[80px]"
+                />
+                {errors.description && (
+                  <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="userId">Спикер*</Label>
+                <Select
+                  onValueChange={(value) => setValue('userId', Number(value))}
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Выберите спикера" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {users.map((user) => (
+                      <SelectItem key={user.id} value={user.id.toString()}>
+                        {user.fullName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.userId && (
+                  <p className="text-red-500 text-sm mt-1">Выберите спикера</p>
+                )}
+              </div>
+
+              {selectedUserData && (
+                <div>
+                  <Label>Специальность спикера*</Label>
+                  <Input
+                    value={selectedUserData.speciality}
+                    disabled
+                    className="mt-1 bg-gray-50"
+                  />
+                </div>
+              )}
+
+              <div>
+                <Label htmlFor="cityId">Город*</Label>
+                <Select>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Выберите город" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cities.map((city) => (
+                      <SelectItem key={city.id} value={city.id.toString()}>
+                        {city.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="date">Дата*</Label>
+                  <Input
+                    id="date"
+                    type="date"
+                    {...register('date', { required: 'Дата обязательна' })}
+                    className="mt-1"
+                  />
+                  {errors.date && (
+                    <p className="text-red-500 text-sm mt-1">{errors.date.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="time">Время*</Label>
+                  <Input
+                    id="time"
+                    type="time"
+                    {...register('time', { required: 'Время обязательно' })}
+                    className="mt-1"
+                  />
+                  {errors.time && (
+                    <p className="text-red-500 text-sm mt-1">{errors.time.message}</p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="photo">Фото</Label>
+                <div className="flex items-center gap-2 mt-1">
+                  <Input
+                    id="photo"
+                    {...register('photo')}
+                    placeholder="URL фотографии или загрузите файл"
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    disabled={uploadingPhoto}
+                    onClick={() => document.getElementById('photo-file')?.click()}
+                  >
+                    {uploadingPhoto ? (
+                      <Icon name="Loader2" size={20} className="animate-spin" />
+                    ) : (
+                      <Icon name="Image" size={20} />
+                    )}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    disabled={uploadingPhoto}
+                    onClick={() => document.getElementById('photo-file')?.click()}
+                  >
+                    <Icon name="Trash2" size={20} />
+                  </Button>
+                  <input
+                    id="photo-file"
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg"
+                    onChange={handlePhotoUpload}
+                    className="hidden"
+                  />
+                </div>
+                {watch('photo') && (
+                  <p className="text-xs text-gray-500 mt-1 break-all">{watch('photo')}</p>
+                )}
+                <p className="text-xs text-gray-500 mt-1">
+                  Размер фото 750×735 в PNG, JPG, JPEG
+                </p>
+              </div>
+            </div>
+
+            <DialogFooter className="mt-6 gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setShowAddDialog(false);
+                  reset();
+                }}
+                className="flex-1 text-gray-600"
+              >
+                Удалить
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
+              >
+                Сохранить
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

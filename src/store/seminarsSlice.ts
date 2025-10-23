@@ -2,19 +2,20 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface Seminar {
   id: number;
-  name: string;
-  speaker: string;
+  title: string;
+  description: string;
   date: string;
-  type: 'future' | 'history' | 'request';
-  status: string;
+  time: string;
+  photo: string;
+  userId: number;
+  status: 'application' | 'upcoming' | 'history';
   likes?: number;
-  requestedBy?: string;
 }
 
 interface SeminarsState {
   seminars: Seminar[];
   searchQuery: string;
-  currentTab: 'future' | 'history' | 'request';
+  currentTab: 'application' | 'upcoming' | 'history';
   page: number;
   rowsPerPage: number;
 }
@@ -22,7 +23,7 @@ interface SeminarsState {
 const initialState: SeminarsState = {
   seminars: [],
   searchQuery: '',
-  currentTab: 'future',
+  currentTab: 'application',
   page: 0,
   rowsPerPage: 10,
 };
@@ -38,9 +39,12 @@ const seminarsSlice = createSlice({
       state.searchQuery = action.payload;
       state.page = 0;
     },
-    setCurrentTab: (state, action: PayloadAction<'future' | 'history' | 'request'>) => {
+    setCurrentTab: (state, action: PayloadAction<'application' | 'upcoming' | 'history'>) => {
       state.currentTab = action.payload;
       state.page = 0;
+    },
+    addSeminar: (state, action: PayloadAction<Seminar>) => {
+      state.seminars.push(action.payload);
     },
     setPage: (state, action: PayloadAction<number>) => {
       state.page = action.payload;
@@ -62,6 +66,7 @@ export const {
   setPage,
   setRowsPerPage,
   deleteSeminar,
+  addSeminar,
 } = seminarsSlice.actions;
 
 export default seminarsSlice.reducer;
