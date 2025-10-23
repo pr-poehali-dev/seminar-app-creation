@@ -43,7 +43,7 @@ export default function SeminarsTable({
             {currentTab === 'application' && <TableHead>Телефон</TableHead>}
             <TableHead>Дата</TableHead>
             {currentTab === 'history' && <TableHead>Лайки</TableHead>}
-            {currentTab === 'upcoming' && <TableHead>Действия</TableHead>}
+            {(currentTab === 'upcoming' || currentTab === 'history') && <TableHead>Действия</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -70,7 +70,7 @@ export default function SeminarsTable({
                     </div>
                   </TableCell>
                 )}
-                {currentTab === 'upcoming' && (
+                {(currentTab === 'upcoming' || currentTab === 'history') && (
                   <TableCell>
                     <Button
                       variant="ghost"
