@@ -41,7 +41,7 @@ export default function Sidebar() {
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-gray-200">
             <img
-              src="https://cdn.poehali.dev/files/760b5574-6eb7-4520-8bcf-c6cd3274be3b.png"
+              src="/favicon.svg"
               alt="FILARA COSMO"
               className="h-16 object-contain"
             />
