@@ -108,7 +108,7 @@ export default function SeminarsPage() {
 
   return (
     <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between gap-4">
         <div className="relative flex-1 max-w-md">
           <Icon
             name="Search"
@@ -122,6 +122,12 @@ export default function SeminarsPage() {
             className="pl-10"
           />
         </div>
+        <Button
+          onClick={() => setShowAddDialog(true)}
+          className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
+        >
+          Добавить семинар
+        </Button>
       </div>
 
       <div className="flex gap-4 mb-6 border-b border-gray-200">
@@ -142,13 +148,6 @@ export default function SeminarsPage() {
           </button>
         ))}
       </div>
-
-      <Button
-        onClick={() => setShowAddDialog(true)}
-        className="w-full mb-4 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
-      >
-        Добавить семинар
-      </Button>
 
       {paginatedSeminars.length === 0 ? (
         <div className="text-center py-12 text-gray-500">
