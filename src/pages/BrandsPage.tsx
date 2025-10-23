@@ -37,6 +37,7 @@ export default function BrandsPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [deleteName, setDeleteName] = useState<string>('');
   const [editBrand, setEditBrand] = useState<Brand | null>(null);
+  const [uploadingEditLogo, setUploadingEditLogo] = useState(false);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<BrandFormData>();
   const { register: registerEdit, handleSubmit: handleSubmitEdit, reset: resetEdit, setValue, formState: { errors: errorsEdit } } = useForm<BrandFormData>();
@@ -74,6 +75,37 @@ export default function BrandsPage() {
     setEditBrand(brand);
     setValue('name', brand.name);
     setValue('logo', brand.logo || '');
+  };
+
+  const handleEditLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.match(/^image\/(png|jpeg|jpg)$/)) {
+      alert('Пожалуйста, загрузите изображение в формате PNG, JPG или JPEG');
+      return;
+    }
+
+    setUploadingEditLogo(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error('Ошибка загрузки');
+
+      const data = await response.json();
+      setValue('logo', data.url);
+    } catch (error) {
+      console.error('Ошибка загрузки логотипа:', error);
+      alert('Ошибка загрузки логотипа');
+    } finally {
+      setUploadingEditLogo(false);
+    }
   };
 
   const onEditSubmit = (data: BrandFormData) => {
@@ -238,9 +270,26 @@ export default function BrandsPage() {
                     placeholder="URL логотипа"
                     className="flex-1"
                   />
-                  <Button type="button" variant="ghost" size="icon">
-                    <Icon name="Upload" size={20} className="text-gray-600" />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    disabled={uploadingEditLogo}
+                    onClick={() => document.getElementById('edit-logo-file')?.click()}
+                  >
+                    {uploadingEditLogo ? (
+                      <Icon name="Loader2" size={20} className="text-gray-600 animate-spin" />
+                    ) : (
+                      <Icon name="Upload" size={20} className="text-gray-600" />
+                    )}
                   </Button>
+                  <input
+                    id="edit-logo-file"
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg"
+                    onChange={handleEditLogoUpload}
+                    className="hidden"
+                  />
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
                   Размер логотипа 600×600 в PNG, JPG, JPEG
