@@ -41,9 +41,9 @@ import {
 } from '@/components/ui/dialog';
 
 const tabs = [
-  { id: 'application', label: 'Заявки на семинар' },
   { id: 'upcoming', label: 'Будущие' },
   { id: 'history', label: 'История' },
+  { id: 'application', label: 'Заявки на семинар' },
 ];
 
 interface SeminarFormData {
