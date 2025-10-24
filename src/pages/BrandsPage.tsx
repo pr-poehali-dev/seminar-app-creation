@@ -122,44 +122,42 @@ export default function BrandsPage() {
 
   return (
     <div className="p-6">
-      <form onSubmit={handleSubmit(onSubmit)} className="mb-6 bg-white p-6 rounded-lg border border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div>
-            <Label htmlFor="name">Введите название бренда</Label>
+      <form onSubmit={handleSubmit(onSubmit)} className="mb-6">
+        <div className="flex gap-3 items-start">
+          <div className="flex-1">
             <Input
               id="name"
               {...register('name', { required: 'Название обязательно' })}
               placeholder="Введите название бренда"
-              className="mt-1"
             />
             {errors.name && (
               <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
             )}
           </div>
 
-          <div>
-            <Label htmlFor="logo">Загрузите логотип бренда</Label>
-            <div className="flex items-center gap-2 mt-1">
-              <Input
-                id="logo"
-                {...register('logo')}
-                placeholder="Размер логотипа 600×600 в PNG, JPG, JPEG"
-                className="flex-1"
-              />
-              <Button type="button" variant="ghost" size="icon">
-                <Icon name="Upload" size={20} className="text-gray-600" />
-              </Button>
-            </div>
+          <div className="flex-1 relative">
+            <Input
+              id="logo"
+              {...register('logo')}
+              placeholder="Загрузите логотип бренда"
+              className="pr-10"
+            />
+            <Button 
+              type="button" 
+              variant="ghost" 
+              size="icon"
+              className="absolute right-1 top-1/2 -translate-y-1/2 text-[#8B5CF6] hover:text-[#7C3AED] hover:bg-transparent"
+            >
+              <Icon name="Upload" size={20} />
+            </Button>
             <p className="text-xs text-gray-500 mt-1">
-              Размер логотипа 600×600 в PNG, JPG, JPEG
+              Размер логотипа 500×500 px PNG, JPG, JPEG
             </p>
           </div>
 
-          <div className="flex items-end">
-            <Button type="submit" className="w-full bg-[#8B5CF6] hover:bg-[#7C3AED] text-white">
-              Добавить бренд
-            </Button>
-          </div>
+          <Button type="submit" className="bg-[#A855F7] hover:bg-[#9333EA] text-white px-8">
+            Добавить бренд
+          </Button>
         </div>
       </form>
 
