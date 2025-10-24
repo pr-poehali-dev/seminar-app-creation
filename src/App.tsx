@@ -11,7 +11,7 @@ import SeminarsPage from './pages/SeminarsPage';
 import BrandsPage from './pages/BrandsPage';
 import EmptyPage from './pages/EmptyPage';
 import LoginPage from './pages/LoginPage';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const queryClient = new QueryClient();
 
@@ -19,13 +19,30 @@ const App = () => {
   const [userEmail, setUserEmail] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('userEmail');
+    const savedAuth = localStorage.getItem('isAuthenticated');
+    
+    if (savedEmail && savedAuth === 'true') {
+      setUserEmail(savedEmail);
+      setIsAuthenticated(true);
+    }
+  }, []);
+
   const handleLogout = () => {
     setIsAuthenticated(false);
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('isAuthenticated');
   };
 
-  const handleLogin = (email: string) => {
+  const handleLogin = (email: string, rememberMe: boolean) => {
     setUserEmail(email);
     setIsAuthenticated(true);
+    
+    if (rememberMe) {
+      localStorage.setItem('userEmail', email);
+      localStorage.setItem('isAuthenticated', 'true');
+    }
   };
 
   return (

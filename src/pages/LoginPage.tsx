@@ -5,7 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import Icon from '@/components/ui/icon';
 
 interface LoginPageProps {
-  onLogin: (email: string) => void;
+  onLogin: (email: string, rememberMe: boolean) => void;
 }
 
 const ALLOWED_EMAILS = [
@@ -93,7 +93,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         setLoginError('Неверная почта или пароль');
         return;
       }
-      onLogin(email);
+      onLogin(email, rememberMe);
     }
   };
 
@@ -103,9 +103,13 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <img 
-              src="https://cdn.poehali.dev/files/2b7c8c2e-68b3-4b90-9cd6-f26d822086e2.png" 
+              src="/logo.png" 
               alt="Filara Cosmo"
               className="h-32"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = 'https://cdn.poehali.dev/files/2b7c8c2e-68b3-4b90-9cd6-f26d822086e2.png';
+              }}
             />
           </div>
         </div>
