@@ -10,15 +10,22 @@ import Sidebar from './components/Sidebar';
 import SeminarsPage from './pages/SeminarsPage';
 import BrandsPage from './pages/BrandsPage';
 import EmptyPage from './pages/EmptyPage';
+import LoginPage from './pages/LoginPage';
 import { useState } from 'react';
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [userEmail] = useState('admin@filara.com');
+  const [userEmail, setUserEmail] = useState('admin@filara.com');
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   const handleLogout = () => {
-    alert('Выход из системы');
+    setIsAuthenticated(false);
+  };
+
+  const handleLogin = (email: string) => {
+    setUserEmail(email);
+    setIsAuthenticated(true);
   };
 
   return (
@@ -28,28 +35,32 @@ const App = () => {
         <Sonner />
         <Provider store={store}>
           <BrowserRouter>
-            <div className="min-h-screen bg-gray-50">
-              <Sidebar />
-              <AppHeader userEmail={userEmail} onLogout={handleLogout} />
-              
-              <main className="md:ml-64 mt-16 min-h-[calc(100vh-4rem)]">
-                <Routes>
-                  <Route path="/" element={<Navigate to="/seminars" replace />} />
-                  <Route path="/seminars" element={<SeminarsPage />} />
-                  <Route path="/applications" element={<EmptyPage />} />
-                  <Route path="/products" element={<EmptyPage />} />
-                  <Route path="/users" element={<EmptyPage />} />
-                  <Route path="/categories" element={<EmptyPage />} />
-                  <Route path="/cities" element={<EmptyPage />} />
-                  <Route path="/brands" element={<BrandsPage />} />
-                  <Route path="/protocols" element={<EmptyPage />} />
-                  <Route path="/orders" element={<EmptyPage />} />
-                  <Route path="/banners" element={<EmptyPage />} />
-                  <Route path="/promocodes" element={<EmptyPage />} />
-                  <Route path="/settings" element={<EmptyPage />} />
-                </Routes>
-              </main>
-            </div>
+            {!isAuthenticated ? (
+              <LoginPage onLogin={handleLogin} />
+            ) : (
+              <div className="min-h-screen bg-gray-50">
+                <Sidebar />
+                <AppHeader userEmail={userEmail} onLogout={handleLogout} />
+                
+                <main className="md:ml-64 mt-16 min-h-[calc(100vh-4rem)]">
+                  <Routes>
+                    <Route path="/" element={<Navigate to="/seminars" replace />} />
+                    <Route path="/seminars" element={<SeminarsPage />} />
+                    <Route path="/applications" element={<EmptyPage />} />
+                    <Route path="/products" element={<EmptyPage />} />
+                    <Route path="/users" element={<EmptyPage />} />
+                    <Route path="/categories" element={<EmptyPage />} />
+                    <Route path="/cities" element={<EmptyPage />} />
+                    <Route path="/brands" element={<BrandsPage />} />
+                    <Route path="/protocols" element={<EmptyPage />} />
+                    <Route path="/orders" element={<EmptyPage />} />
+                    <Route path="/banners" element={<EmptyPage />} />
+                    <Route path="/promocodes" element={<EmptyPage />} />
+                    <Route path="/settings" element={<EmptyPage />} />
+                  </Routes>
+                </main>
+              </div>
+            )}
           </BrowserRouter>
         </Provider>
       </TooltipProvider>
