@@ -18,11 +18,11 @@ export default function AppHeader({ userEmail, onLogout }: AppHeaderProps) {
           <span className="text-sm text-gray-700">{userEmail}</span>
           <Button
             onClick={onLogout}
-            variant="outline"
-            className="bg-[#8B5CF6] text-white hover:bg-[#7C3AED] border-none"
+            variant="ghost"
+            size="icon"
+            className="text-gray-400 hover:text-gray-500 hover:bg-transparent"
           >
-            <Icon name="LogOut" size={16} className="mr-2" />
-            Выход
+            <Icon name="LogOut" size={20} />
           </Button>
         </div>
       </div>
