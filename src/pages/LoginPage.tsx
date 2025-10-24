@@ -149,7 +149,8 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
             <Button
               type="submit"
-              className="w-full bg-[#B794E8] hover:bg-[#A683D7] text-white"
+              disabled={!email || !password || !!emailError || !!passwordError}
+              className="w-full bg-[#B794E8] hover:bg-[#A683D7] text-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Войти
             </Button>
