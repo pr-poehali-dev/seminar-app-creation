@@ -8,6 +8,19 @@ interface LoginPageProps {
   onLogin: (email: string) => void;
 }
 
+const ALLOWED_EMAILS = [
+  'm.ivanova@example.com',
+  'e.petrova@example.com',
+  'a.sidorov@example.com',
+  'v.kravtsov@example.com',
+  'n.alyoshina@example.com',
+  't.ulianova@example.com',
+  'k.smirnov@example.com',
+  's.romanova@example.com',
+  'o.vasilieva@example.com',
+  'i.zaicev@example.com'
+];
+
 export default function LoginPage({ onLogin }: LoginPageProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,6 +28,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   const [rememberMe, setRememberMe] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [loginError, setLoginError] = useState('');
   const [touched, setTouched] = useState({ email: false, password: false });
 
   const validateEmail = (value: string) => {
@@ -40,6 +54,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
+    setLoginError('');
     if (touched.email) {
       setEmailError(validateEmail(value));
     }
@@ -47,6 +62,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
   const handlePasswordChange = (value: string) => {
     setPassword(value);
+    setLoginError('');
     if (touched.password) {
       setPasswordError(validatePassword(value));
     }
@@ -73,6 +89,10 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
     setTouched({ email: true, password: true });
 
     if (!emailErr && !passwordErr) {
+      if (!ALLOWED_EMAILS.includes(email.toLowerCase())) {
+        setLoginError('Неверная почта или пароль');
+        return;
+      }
       onLogin(email);
     }
   };
@@ -146,6 +166,12 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                 Запомнить меня
               </label>
             </div>
+
+            {loginError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-md animate-in fade-in slide-in-from-top-1 duration-200">
+                <p className="text-sm text-red-600">{loginError}</p>
+              </div>
+            )}
 
             <Button
               type="submit"
