@@ -16,8 +16,8 @@ import { useState } from 'react';
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [userEmail, setUserEmail] = useState('admin@filara.com');
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [userEmail, setUserEmail] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleLogout = () => {
     setIsAuthenticated(false);
