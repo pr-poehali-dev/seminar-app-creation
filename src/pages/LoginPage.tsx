@@ -13,10 +13,66 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [touched, setTouched] = useState({ email: false, password: false });
+
+  const validateEmail = (value: string) => {
+    if (!value) {
+      return 'E-mail обязателен для заполнения';
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      return 'Введите корректный e-mail';
+    }
+    return '';
+  };
+
+  const validatePassword = (value: string) => {
+    if (!value) {
+      return 'Пароль обязателен для заполнения';
+    }
+    if (value.length < 6) {
+      return 'Пароль должен содержать минимум 6 символов';
+    }
+    return '';
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    if (touched.email) {
+      setEmailError(validateEmail(value));
+    }
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    if (touched.password) {
+      setPasswordError(validatePassword(value));
+    }
+  };
+
+  const handleEmailBlur = () => {
+    setTouched({ ...touched, email: true });
+    setEmailError(validateEmail(email));
+  };
+
+  const handlePasswordBlur = () => {
+    setTouched({ ...touched, password: true });
+    setPasswordError(validatePassword(password));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email && password) {
+    
+    const emailErr = validateEmail(email);
+    const passwordErr = validatePassword(password);
+    
+    setEmailError(emailErr);
+    setPasswordError(passwordErr);
+    setTouched({ email: true, password: true });
+
+    if (!emailErr && !passwordErr) {
       onLogin(email);
     }
   };
@@ -44,9 +100,13 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                 type="email"
                 placeholder="Введите свой e-mail"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full"
+                onChange={(e) => handleEmailChange(e.target.value)}
+                onBlur={handleEmailBlur}
+                className={`w-full ${emailError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
               />
+              {emailError && (
+                <p className="text-sm text-red-500 mt-1">{emailError}</p>
+              )}
             </div>
 
             <div>
@@ -56,8 +116,9 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Введите пароль"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pr-10"
+                  onChange={(e) => handlePasswordChange(e.target.value)}
+                  onBlur={handlePasswordBlur}
+                  className={`w-full pr-10 ${passwordError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                 />
                 <button
                   type="button"
@@ -67,6 +128,9 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                   <Icon name={showPassword ? 'EyeOff' : 'Eye'} size={18} />
                 </button>
               </div>
+              {passwordError && (
+                <p className="text-sm text-red-500 mt-1">{passwordError}</p>
+              )}
             </div>
 
             <div className="flex items-center space-x-2">
