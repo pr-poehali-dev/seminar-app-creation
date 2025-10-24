@@ -108,8 +108,8 @@ export default function SeminarsPage() {
 
   return (
     <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div className="relative flex-1 max-w-md">
+      <div className="mb-6 flex items-center justify-end">
+        <div className="relative max-w-md">
           <Icon
             name="Search"
             size={20}
@@ -124,45 +124,26 @@ export default function SeminarsPage() {
         </div>
       </div>
 
-      <div className="flex gap-4 mb-6 border-b border-gray-200">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => dispatch(setCurrentTab(tab.id as any))}
-            className={`pb-3 px-1 relative font-medium transition-colors ${
-              currentTab === tab.id
-                ? 'text-[#8B5CF6]'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            {tab.label}
-            {currentTab === tab.id && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#8B5CF6]" />
-            )}
-          </button>
-        ))}
-      </div>
-
-      <Button
-        onClick={() => setShowAddDialog(true)}
-        className="w-full mb-4 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
-      >
-        Добавить семинар
-      </Button>
-
-      {paginatedSeminars.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
-          Здесь пока нет семинаров
+      <div className="flex items-center justify-between mb-6 border-b border-gray-200">
+        <div className="flex gap-4">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => dispatch(setCurrentTab(tab.id as any))}
+              className={`pb-3 px-1 relative font-medium transition-colors ${
+                currentTab === tab.id
+                  ? 'text-[#8B5CF6]'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {tab.label}
+              {currentTab === tab.id && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#8B5CF6]" />
+              )}
+            </button>
+          ))}
         </div>
-      ) : (
-        <>
-          <SeminarsTable
-            seminars={paginatedSeminars}
-            currentTab={currentTab}
-            getUserById={getUserById}
-            onDelete={handleDelete}
-          />
-
+        <div className="pb-3">
           <SeminarsPagination
             page={page}
             rowsPerPage={rowsPerPage}
@@ -170,7 +151,29 @@ export default function SeminarsPage() {
             onPageChange={(newPage) => dispatch(setPage(newPage))}
             onRowsPerPageChange={(rows) => dispatch(setRowsPerPage(rows))}
           />
-        </>
+        </div>
+      </div>
+
+      {currentTab !== 'application' && (
+        <Button
+          onClick={() => setShowAddDialog(true)}
+          className="w-full mb-4 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white"
+        >
+          Добавить семинар
+        </Button>
+      )}
+
+      {paginatedSeminars.length === 0 ? (
+        <div className="text-center py-12 text-gray-500">
+          Здесь пока нет семинаров
+        </div>
+      ) : (
+        <SeminarsTable
+          seminars={paginatedSeminars}
+          currentTab={currentTab}
+          getUserById={getUserById}
+          onDelete={handleDelete}
+        />
       )}
 
       <AddSeminarDialog
