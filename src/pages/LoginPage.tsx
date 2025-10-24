@@ -105,7 +105,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                 className={`w-full ${emailError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
               />
               {emailError && (
-                <p className="text-sm text-red-500 mt-1">{emailError}</p>
+                <p className="text-sm text-red-500 mt-1 animate-in fade-in slide-in-from-top-1 duration-200">{emailError}</p>
               )}
             </div>
 
@@ -129,7 +129,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                 </button>
               </div>
               {passwordError && (
-                <p className="text-sm text-red-500 mt-1">{passwordError}</p>
+                <p className="text-sm text-red-500 mt-1 animate-in fade-in slide-in-from-top-1 duration-200">{passwordError}</p>
               )}
             </div>
 
