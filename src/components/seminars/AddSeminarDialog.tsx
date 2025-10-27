@@ -19,6 +19,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useState } from 'react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface SeminarFormData {
   title: string;
@@ -57,6 +66,7 @@ export default function AddSeminarDialog({
   cities,
 }: AddSeminarDialogProps) {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [showDateError, setShowDateError] = useState(false);
 
   const {
     register,
@@ -106,7 +116,7 @@ export default function AddSeminarDialog({
     const now = new Date();
     
     if (seminarDateTime < now) {
-      alert('Дата и время семинара не могут быть в прошлом');
+      setShowDateError(true);
       return;
     }
     
@@ -115,7 +125,27 @@ export default function AddSeminarDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <>
+      <AlertDialog open={showDateError} onOpenChange={setShowDateError}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Icon name="AlertCircle" size={24} className="text-red-500" />
+              Ошибка валидации
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Дата и время семинара не могут быть в прошлом. Пожалуйста, выберите будущую дату и время.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowDateError(false)}>
+              Понятно
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Добавить семинар</DialogTitle>
@@ -293,5 +323,6 @@ export default function AddSeminarDialog({
         </form>
       </DialogContent>
     </Dialog>
+    </>
   );
 }
