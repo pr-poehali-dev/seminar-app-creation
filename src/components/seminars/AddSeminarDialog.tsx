@@ -102,6 +102,14 @@ export default function AddSeminarDialog({
   const selectedUserData = users.find((u) => u.id === Number(selectedUser));
 
   const handleFormSubmit = (data: SeminarFormData) => {
+    const seminarDateTime = new Date(`${data.date}T${data.time}`);
+    const now = new Date();
+    
+    if (seminarDateTime < now) {
+      alert('Дата и время семинара не могут быть в прошлом');
+      return;
+    }
+    
     onSubmit(data);
     reset();
   };
